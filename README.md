@@ -13,7 +13,8 @@ Installation
 
 `gem 'smsbox_api', git: 'https://github.com/manuelpradal/smsbox_api.git'`
 
-Run migration : `rake db:migrate`. Please note that the migration which create the sms table stays inside the engine.
+Install migrations : `rake smsbox_api:install:migrations`. It creates a new migration in your `db/migrate` directory.
+Run migration : `rake db:migrate`
 
 Mount the engine in your `config/routes.rb` file :
 
@@ -40,7 +41,7 @@ end</code></pre>
 Send a SMS easily
 =================
 
-SmsboxApi::Sms.send_sms 'number_without_+_char', 'Your sms content'
+`SmsboxApi::Sms.send_sms 'number_without_+_char', 'Your sms content'`
 
 It creates a record in `smsbox_api_sms` table.
 

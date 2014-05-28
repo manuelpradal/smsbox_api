@@ -11,17 +11,15 @@ Rails 4.0.0 or later.
 Installation
 ============
 
-gem 'smsbox_api', git: 'https://github.com/manuelpradal/smsbox_api.git'
+`gem 'smsbox_api', git: 'https://github.com/manuelpradal/smsbox_api.git'`
 
 Run migration : `rake db:migrate`. Please note that the migration which create the sms table stays inside the engine.
 
 Mount the engine in your `config/routes.rb` file :
 
-<pre><code>
-mount SmsboxApi::Engine => "/your_mount_point"
-</code></pre>
+<pre><code>mount SmsboxApi::Engine => "/your_mount_point"</code></pre>
 
-This line makes the following URLs availables :
+This line makes the following URLs available :
 `/your_mount_point/ack`, used by SmsBox for ack callbacks
 `/your_mount_point/response`, used by SmsBox for sms in response to Sms sent with mode 'Reponse'
 
@@ -30,16 +28,14 @@ Configuration
 
 In your application.rb file, or inside an initializer, add these lines :
 
-<pre><code>
-module YourApp
+<pre><code>module YourApp
   class Application < Rails::Application
     config.to_prepare do
       SmsboxApi::Engine.smsbox_login = "YourSMSBoxLogin"
       SmsboxApi::Engine.smsbox_pass = "YourSMSBoxPass"
     end
   end
-end
-</code></pre>
+end</code></pre>
 
 Send a SMS easily
 =================
@@ -53,9 +49,9 @@ Customizations
 
 Create a decorator in your main app in `app/decorators/models/smsbox_api/sms_decorator.rb` file :
 
-<pre><code>
-SmsboxApi::Sms.class_eval do
-  #This method is called for each sms send attempt, to check if a real sms must be sent to this number
+<pre><code>SmsboxApi::Sms.class_eval do
+  #This method is called for each sms send attempt,
+  #to check if a real sms must be sent to this number
   def self.is_allowed_number? number
     #Example
     return !black_list.include?(number)
@@ -74,7 +70,6 @@ SmsboxApi::Sms.class_eval do
   def blacklisted
     pr "send sms #{self.inspect}"
   end
-end
-</code></pre>
+end</code></pre>
 
 You can also add custom columns to Sms model, to add callbacks for ack or response to a sent sms.

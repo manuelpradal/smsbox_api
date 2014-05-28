@@ -19,10 +19,5 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails"
 
-  s.add_development_dependency "pg"
-
-  s.add_development_dependency "simple_enum"
-  s.add_development_dependency "pry-rails"
-  s.add_development_dependency "pry"
   s.add_development_dependency "httpi"
 end

@@ -1,7 +1,7 @@
 class CreateSmsboxApiSms < ActiveRecord::Migration
   def change
     create_table :smsbox_api_sms do |t|
-      t.integer :direction_cd
+      t.integer :direction
       t.text :api_response
       t.string :number
       t.text :mode

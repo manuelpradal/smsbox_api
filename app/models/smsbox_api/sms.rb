@@ -2,10 +2,8 @@ module SmsboxApi
   class Sms < ActiveRecord::Base
     validates :number, :message, presence: true
 
-    as_enum :direction, {
-      incoming: 0,
-      outgoing: 1
-    }
+    DIRECTION_INCOMING = 0
+    DIRECTION_OUTGOING = 1
 
     #Must be overriden by main app
     def self.is_allowed_number? number
@@ -14,13 +12,13 @@ module SmsboxApi
 
     def self.send_sms number, message, mode = 'Standard', send_options = {}, additionnal_model_columns = {}
       sms = SmsboxApi::Sms.create({
-        direction: :outgoing,
+        direction: DIRECTION_OUTGOING,
         number: number,
         message: message,
         mode: mode
       }.merge(additionnal_model_columns))
 
-      request = HTTPI::Request.new("http://api.smsbox.fr/api.php")
+      request = HTTPI::Request.new(SmsboxApi::Engine::SMSBOX_API_URL)
       request.query = {
         login: SmsboxApi::Engine.smsbox_login,
         pass: SmsboxApi::Engine.smsbox_pass,
@@ -73,7 +71,7 @@ module SmsboxApi
 
     def self.receive_response params
       sms = SmsboxApi::Sms.create({
-        direction: :incoming,
+        direction: DIRECTION_INCOMING,
         number: params[:numero],
         reference: params[:reference],
         reception_time: Time.at(params[:ts].to_i),

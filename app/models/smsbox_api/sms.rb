@@ -12,46 +12,45 @@ module SmsboxApi
       false
     end
 
-    def self.send_sms number, message, mode = 'Standard', send_options = {}
+    def self.send_sms number, message, mode = 'Standard', send_options = {}, additionnal_model_columns = {}
       sms = SmsboxApi::Sms.create({
         direction: :outgoing,
         number: number,
         message: message,
         mode: mode
-      })
+      }.merge(additionnal_model_columns))
 
-      if sms
-        request = HTTPI::Request.new("http://api.smsbox.fr/api.php")
-        request.query = {
-          login: SmsboxApi::Engine.smsbox_login,
-          pass: SmsboxApi::Engine.smsbox_pass,
-          dest: sms.number,
-          msg: sms.message,
-          mode: sms.mode,
-          callback: "1",
-          cvar: sms.id,
-          id: "1"
-        }
+      request = HTTPI::Request.new("http://api.smsbox.fr/api.php")
+      request.query = {
+        login: SmsboxApi::Engine.smsbox_login,
+        pass: SmsboxApi::Engine.smsbox_pass,
+        dest: sms.number,
+        msg: sms.message,
+        mode: sms.mode,
+        callback: "1",
+        cvar: sms.id,
+        id: "1"
+      }.merge(send_options)
 
-        #Real send ?
-        if is_allowed_number? sms.number
-          response = HTTPI.get(request, :net_http).body
+      #Real send ?
+      if is_allowed_number? sms.number
+        response = HTTPI.get(request, :net_http).body
 
-          if response.index("OK")
-            sms.api_response = "OK"
-            sms.reference = response[3..-1]
-            sms.save
-            return true
-          else
-            sms.api_response = response
-            sms.save
-            return false
-          end
+        if response.index("OK")
+          sms.api_response = "OK"
+          sms.reference = response[3..-1]
+          sms.save
+          sms.handle_sent
+          return true
         else
-          sms.blacklisted
+          sms.api_response = response
+          sms.save
+          sms.handle_sent_fail
+          return false
         end
       else
-        return false
+        sms.handle_blacklisted
+        return true
       end
     end
 
@@ -85,6 +84,11 @@ module SmsboxApi
     end
 
     #Must be overriden by main app
+    def handle_sent
+      #NOTHING
+    end
+
+    #Must be overriden by main app
     def handle_ack
       #NOTHING
     end
@@ -95,7 +99,12 @@ module SmsboxApi
     end
 
     #Must be overriden by main app
-    def blacklisted
+    def handle_blacklisted
+      #NOTHING
+    end
+
+    #Must be overriden by main app
+    def handle_sent_fail
       #NOTHING
     end
   end

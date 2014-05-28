@@ -58,6 +58,12 @@ Create a decorator in your main app in `app/decorators/models/smsbox_api/sms_dec
     return !black_list.include?(number)
   end
 
+  #Must be overriden by main app
+  def handle_sent
+    #NOTHING
+  end
+
+  #Must be overriden by main app
   def handle_ack
     #NOTHING
   end
@@ -68,9 +74,51 @@ Create a decorator in your main app in `app/decorators/models/smsbox_api/sms_dec
   end
 
   #Must be overriden by main app
-  def blacklisted
-    pr "send sms #{self.inspect}"
+  def handle_blacklisted
+    #NOTHING
+  end
+
+  #Must be overriden by main app
+  def handle_sent_fail
+    #NOTHING
   end
 end</code></pre>
 
 You can also add custom columns to Sms model, to add callbacks for ack or response to a sent sms.
+
+Association with your app models : Use case
+-------------------------------------------
+
+Imagine your main app `User` instances can send SMS.
+
+You have to create a new column in Sms table :
+
+<pre><code>class CreateUserAndSmsAssociation < ActiveRecord::Migration
+  def change
+    add_column :smsbox_api_sms,:user_id,:integer
+  end
+end</code></pre>
+
+Create a new ActiveRecord association in `app/decorators/models/smsbox_api/sms_decorator.rb` file :
+
+<pre><code>SmsboxApi::Sms.class_eval do
+  belongs_to :user, class_name: 'User'
+
+  #Omitted : rest of your overrides...
+end</code></pre>
+
+and `app/models/user.rb` :
+
+<pre><code>class User < ActiveRecord::Base
+  has_many :sms, class_name: 'SmsboxApi::Sms'
+end</code></pre>
+
+Create an instance method for your User model :
+
+<pre><code>class User < ActiveRecord::Base
+  def say_hello dest_phone_number, message_content
+    SmsboxApi::Sms.send_sms dest_phone_number, message_content, 'Standard', {}, {user: self}
+  end
+end</code></pre>
+
+Now, if you execute `user.say_hello '33612121212', "Hello from #{user.name} !"`, a sms record is created, linked to user record.

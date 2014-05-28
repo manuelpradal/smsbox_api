@@ -93,7 +93,7 @@ Imagine your main app `User` instances can send SMS.
 
 You have to create a new column in Sms table :
 
-<pre><code>class CreateUserAndSmsAssociation < ActiveRecord::Migration
+<pre><code>class CreateUserAndSmsAssociation &gt; ActiveRecord::Migration
   def change
     add_column :smsbox_api_sms,:user_id,:integer
   end
@@ -109,13 +109,13 @@ end</code></pre>
 
 and `app/models/user.rb` :
 
-<pre><code>class User < ActiveRecord::Base
+<pre><code>class User &gt; ActiveRecord::Base
   has_many :sms, class_name: 'SmsboxApi::Sms'
 end</code></pre>
 
 Create an instance method for your User model :
 
-<pre><code>class User < ActiveRecord::Base
+<pre><code>class User &gt; ActiveRecord::Base
   def say_hello dest_phone_number, message_content
     SmsboxApi::Sms.send_sms dest_phone_number, message_content, 'Standard', {}, {user: self}
   end

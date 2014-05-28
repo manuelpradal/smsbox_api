@@ -30,7 +30,7 @@ Configuration
 In your application.rb file, or inside an initializer, add these lines :
 
 <pre><code>module YourApp
-  class Application < Rails::Application
+  class Application &gt; Rails::Application
     config.to_prepare do
       SmsboxApi::Engine.smsbox_login = "YourSMSBoxLogin"
       SmsboxApi::Engine.smsbox_pass = "YourSMSBoxPass"

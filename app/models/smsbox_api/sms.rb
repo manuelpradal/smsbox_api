@@ -30,6 +30,8 @@ module SmsboxApi
         id: "1"
       }.merge(send_options)
 
+      return true if Rails.env == 'test'
+
       #Real send ?
       if is_allowed_number? sms.number
         response = HTTPI.get(request, :net_http).body

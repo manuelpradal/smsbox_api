@@ -18,6 +18,8 @@ module SmsboxApi
         mode: mode
       }.merge(additionnal_model_columns))
 
+      return false unless sms
+
       request = HTTPI::Request.new(SmsboxApi::Engine::SMSBOX_API_URL)
       request.query = {
         login: SmsboxApi::Engine.smsbox_login,

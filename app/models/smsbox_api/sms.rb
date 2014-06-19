@@ -18,7 +18,7 @@ module SmsboxApi
       sms = SmsboxApi::Sms.create({
         direction: DIRECTION_OUTGOING,
         number: number,
-        message: message,
+        message: message.encode("ISO8859-1"),
         mode: mode
       }.merge(additionnal_model_columns))
 

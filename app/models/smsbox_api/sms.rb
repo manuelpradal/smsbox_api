@@ -2,6 +2,10 @@ module SmsboxApi
   class Sms < ActiveRecord::Base
     validates :number, :message, presence: true
 
+    scope :incoming_sms, -> {where('direction = ?', SmsboxApi::Sms::DIRECTION_INCOMING)}
+    scope :outgoing_sms, -> {where('direction = ?', SmsboxApi::Sms::DIRECTION_OUTGOING)}
+    scope :with_answer_sms, -> {where('mode = ?', 'Reponse')}
+
     DIRECTION_INCOMING = 0
     DIRECTION_OUTGOING = 1
 
@@ -25,7 +29,7 @@ module SmsboxApi
         login: SmsboxApi::Engine.smsbox_login,
         pass: SmsboxApi::Engine.smsbox_pass,
         dest: sms.number,
-        msg: sms.message,
+        msg: sms.message.encode("ISO8859-1"),
         mode: sms.mode,
         callback: "1",
         cvar: sms.id,

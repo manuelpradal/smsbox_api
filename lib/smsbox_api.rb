@@ -7,3 +7,4 @@ module SmsboxApi
     SMSBOX_API_URL = 'http://api.smsbox.fr/api.php'
   end
 end
+

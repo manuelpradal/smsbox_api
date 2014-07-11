@@ -1,6 +1,7 @@
 module SmsboxApi
   class Sms < ActiveRecord::Base
     validates :number, :message, presence: true
+    before_create :normalize_number
 
     scope :incoming_sms, -> {where('direction = ?', SmsboxApi::Sms::DIRECTION_INCOMING)}
     scope :outgoing_sms, -> {where('direction = ?', SmsboxApi::Sms::DIRECTION_OUTGOING)}
@@ -111,6 +112,11 @@ module SmsboxApi
 
     #Must be overriden by main app
     def handle_sent_fail
+      #NOTHING
+    end
+
+    #Must be overriden by main app
+    def normalize_number
       #NOTHING
     end
   end

@@ -12,17 +12,21 @@ module SmsboxApi
     def sms_ack
       begin
         SmsboxApi::Sms.receive_ack params
-      rescue => e
-        render nothing: true
+      rescue
       end
+
+      render nothing: true
+      return
     end
 
     def sms_response
       begin
         SmsboxApi::Sms.receive_response params
-      rescue => e
-        render nothing: true
+      rescue
       end
+
+      render nothing: true
+      return
     end
   end
 end

@@ -1,4 +1,5 @@
 require "smsbox_api/engine"
+require "httpi"
 
 module SmsboxApi
   class Engine < ::Rails::Engine

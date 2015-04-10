@@ -19,5 +19,5 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails"
 
-  s.add_development_dependency "httpi"
+  s.add_dependency "httpi"
 end
